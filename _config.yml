@@ -207,8 +207,10 @@ kramdown:
 # Includes & excludes
 include: #['_pages']
   - _pages/about.md
-  - _pages/publications.md
+  - _pages/dropdown.md
   - _pages/opportunities.md
+  - _pages/projects.md
+  - _pages/publications.md
   
 exclude:
   - bin

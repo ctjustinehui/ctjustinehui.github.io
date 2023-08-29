@@ -4,7 +4,7 @@ permalink: /opportunities/
 title: opportunities
 description: Current postgraduate opportunities at our lab
 nav: true
-nav_order: 5
+nav_order: 3
 ---
 
 <!---## Call for students: 1 Funded PhD students, 2 Funded Master’s students --->
