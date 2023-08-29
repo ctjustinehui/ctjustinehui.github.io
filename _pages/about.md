@@ -2,11 +2,11 @@
 layout: about
 title: about
 permalink: /
-subtitle: #<a href='#'>Affiliations</a>. Address. Contacts. Moto. Etc.
+subtitle: <a href='https://cal.auckland.ac.nz/'>Communication Acoustics Lab</a>, <a href='https://speechresearch.auckland.ac.nz/'>Speech Research @ UoA</a>, University of Auckland
 
 profile:
   align: right
-  image: #prof_pic.jpg
+  image: AcousticsLabSideviewPhoto.jpg #prof_pic.jpg
   image_circular: true # crops the image to make it circular
   address: >
 
@@ -16,7 +16,17 @@ latest_posts: false  # includes a list of the newest posts
 selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
+BE(1st class Hons), BA(Hons) (University of Auckland, New Zealand), PhD (Sophia University, Japan)
 
+Justine obtained her conjoint BE(Hons) in Computer Systems Engineering and BA(Hons) (BA in Linguistics and Japanese and BA(Hons) in Asian Studies) at the University of Auckland. This was followed by several years in industry at IBM (project at Unitec/Air NZ), while she studied a ME with Dr. Catherine Watson on speech synthesis for healthcare robots. She received her PhD at Sophia University, Japan, at the Speech Communication Lab under Prof. Takayuki Arai on the relationship between hearing deficits and speech and melody perception.
+
+Research
+
+After her PhD, she came back to Auckland as a postdoctoral research fellow (PI: A/P Yusuke Hioka) examining how language familiarity affects our understanding of speech in different acoustic environments while being involved in the MPAi (Māori pronunciation aid) project with A/P Catherine Watson, Dr. Peter Keegan and Dr. Danielle Lottridge, on developing a computer interface based application for users to learn and improve their Māori vowel pronunciation by getting real-time visual feedback.
+
+Her main research interests include speech perception and production of hearing impaired listeners and non-native speakers, hearing assistive technologies and phonetics focusing on Japanese and te reo Māori.
+
+She is currently a lecturer at the Department of Mechanical and Mechatronics Engineering, University of Auckland.
 <!---
 Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
 
