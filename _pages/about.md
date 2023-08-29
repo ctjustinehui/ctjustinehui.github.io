@@ -17,9 +17,8 @@ selected_papers: false # includes a list of papers marked as "selected={true}"
 social: false  # includes social icons at the bottom of the page
 ---
 
-##### BE(1st class Hons), BA(Hons) (University of Auckland, New Zealand), PhD (Sophia University, Japan)
 
-Justine obtained her conjoint BE(Hons) in Computer Systems Engineering and BA(Hons) (BA in Linguistics and Japanese and BA(Hons) in Asian Studies) at the University of Auckland. This was followed by several years in industry at IBM (project at Unitec/Air NZ), while she studied a ME with Dr. Catherine Watson on speech synthesis for healthcare robots. She received her PhD at Sophia University, Japan, at the [Speech Communication Lab](https://splab.net/) under Prof. Takayuki Arai on the relationship between hearing deficits and speech and melody perception.
+Justine obtained her conjoint BE(1st class Hons) in Computer Systems Engineering and BA(Hons) (BA in Linguistics and Japanese and BA(Hons) in Asian Studies) at the University of Auckland. This was followed by several years in industry at IBM (project at Unitec/Air NZ), while she studied a ME with Dr. Catherine Watson on speech synthesis for healthcare robots. She received her PhD at Sophia University, Japan, at the [Speech Communication Lab](https://splab.net/) under Prof. Takayuki Arai on the relationship between hearing deficits and speech and melody perception.
 
 ### Research
 
