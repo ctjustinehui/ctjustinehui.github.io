@@ -2,7 +2,7 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='https://cal.auckland.ac.nz/'>Communication Acoustics Lab</a>, <a href='https://speechresearch.auckland.ac.nz/'>Speech Research @ UoA</a>, <a href='https://profiles.auckland.ac.nz/justine-hui'>University of Auckland</a>, justine.hui at auckland.ac.nz
+subtitle: <a href='https://cal.auckland.ac.nz/'>Communication Acoustics Lab</a>, <a href='https://speechresearch.auckland.ac.nz/'>Speech Research @ UoA</a>, <a href='https://profiles.auckland.ac.nz/justine-hui'>University of Auckland</a>
 
 profile:
   align: right
