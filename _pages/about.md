@@ -2,14 +2,14 @@
 layout: about
 title: about
 permalink: /
-subtitle: <a href='https://cal.auckland.ac.nz/'>Communication Acoustics Lab</a>, <a href='https://speechresearch.auckland.ac.nz/'>Speech Research @ UoA</a>, <a href='https://profiles.auckland.ac.nz/justine-hui'>University of Auckland
+subtitle: <a href='https://cal.auckland.ac.nz/'>Communication Acoustics Lab</a>, <a href='https://speechresearch.auckland.ac.nz/'>Speech Research @ UoA</a>, <a href='https://profiles.auckland.ac.nz/justine-hui'>University of Auckland, justine.hui at auckland.ac.nz
 
 profile:
   align: right
   image: AcousticsLabSideviewPhoto.jpg #prof_pic.jpg
   image_circular: true # crops the image to make it circular
   address: >
-    justine.hui at auckland.ac.nz
+    
 
 news: false  # includes a list of news items
 latest_posts: false  # includes a list of the newest posts
