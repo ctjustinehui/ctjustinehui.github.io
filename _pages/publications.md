@@ -2,7 +2,7 @@
 layout: page
 permalink: /publications/
 title: Publications
-description: Publications about some works that I have done or collaborated with. 
+description: papers and abstracts that made it through. 
 sections:
   - bibquery: "@article"
     text: "Journal articles"
