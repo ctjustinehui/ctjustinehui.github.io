@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Unlocking curious minds
-description: Understanding the physics of speech production
+description: Understanding the physics of speech production (with Prof Catherine Watson, Dr Peter Keegan)
 img:
 importance: 4
 category: work
@@ -15,4 +15,4 @@ related_publications:
     src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGD8H0wOOo&#x2F;Z_ttmnlxQrK0QvpqDnRKuQ&#x2F;view?embed" allowfullscreen="allowfullscreen" allow="fullscreen">
   </iframe>
 </div>
-<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGD8H0wOOo&#x2F;Z_ttmnlxQrK0QvpqDnRKuQ&#x2F;view?utm_content=DAGD8H0wOOo&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">Copy of MPAi manual test</a> by Justine Hui
+<a href="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGD8H0wOOo&#x2F;Z_ttmnlxQrK0QvpqDnRKuQ&#x2F;view?utm_content=DAGD8H0wOOo&amp;utm_campaign=designshare&amp;utm_medium=embeds&amp;utm_source=link" target="_blank" rel="noopener">Copy of MPAi manual test</a> by Brooke Ross
