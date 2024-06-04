@@ -1,0 +1,30 @@
+<h1>Linguistic Experiment</h1>
+<h2>Consent for Participation in a Research Project</h2>
+
+<h3>Invitation to Participate and Description of Project </h3>
+<p>[details]</p>
+
+<h3>Purpose of research</h3>
+<p>[details]</p> 
+
+<h3>Description of the Procedure</h3>
+<p>[details]</p>
+
+<h3>Risks and Inconveniences</h3>
+<p>[details]</p>
+
+<h3>Benefits</h3>
+<p>[details]</p>
+
+<h3>Compensation</h3> 
+<p>[details]</p>
+
+<h3>Confidentiality</h3>
+<p>Your name will not be recorded and, therefore, will not appear in subsequent scholarly presentations or publications. Other personal information gathered in this study will not be disclosed to any persons other than the investigators and their collaborators. Furthermore, effort will be made to keep this information secure and to destroy it once the results of the study have been published. Following the standard practice in linguistics research, recorded linguistic data, however, will not be disposed (unless by specific request of the participant), as its preservation is necessary for further studies involving wider samples of speakers or for studies examining linguistic change over time.</p>
+
+<p>The research study you are participating in may be reviewed for quality assurance to make sure that the required laws and guidelines are followed. If chosen, (a) representative(s) of the Human Research Ethics Program (HREP) may access study-related data and/or consent materials as part of the review. All information accessed by the HREP will be upheld to the same level of confidentiality that has been stated by the research team.</p>
+
+<h3>Voluntary Participation</h3>
+<p>You are free to choose not to participate, and, if you do become a participant, you are free to withdraw from the experiment at any time during its course, by clicking away from the website. Due to the anonymous nature of the experiment, you will not be able to withdraw after you have completed the experiment. Should you terminate your participation, you may do so without jeopardizing any of the following that may apply to you, namely, any opportunities to serve as a participant in future experiments or your standing as a student if you are a student.</p>	 
+
+<p>If you have further questions about this project, please contact the principal investigator [details]. If you have any questions about your rights as a research participant, please contact the Office of Research Ethics, [details]</p>

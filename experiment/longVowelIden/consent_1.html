@@ -1,0 +1,171 @@
+<!-- This Program is developed on jsPsych library by Hyoung Seok Kwon & modified by Lisa Sullivan --> 
+<!-- Development period: from Oct 26, 2017 to April, 2020 --> 
+<!-- library location: jspsych-master/ -->
+<!-- PHP file: save_data.php --> 
+<!-- result file location and format: data/PARTICIPANTCODEO_result.csv -->
+<!-- jsPsych.currentTimelineNodeID bug: cann't get activeID when it is called in jsPsych.init.-->
+<!-- Warning: if you provide an array that has very few valid permutations with no neighboring elements, 
+     then this method will fail and cause the browser to hang. -->
+ 
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="UTF-8"> 
+    <!-- Specify the title of your experiment here. This appears in the browser tab for the user -->
+    <title>Linguistics Experiment - First Names & Gender</title> 
+    <!-- 	this loads jquery and the main jspsych files. Do not remove (updates to more recent 
+    		versions may cause issues)
+    -->
+    <script src="jquery/jquery-3.2.1.min.js"></script> 
+    <script src="jspsych-master/jspsych.js"></script> 
+    <!-- Load your plugins here -->
+    <script src="jspsych-master/plugins/jspsych-instructions.js"></script> 
+    <!-- Loads the css file with the standard formatting -->
+    <link href="jspsych-master/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    
+    <!-- Custom CSS to make the experiment look nice -->
+    <style type="text/css">
+    	.jspsych-btn{margin: 15px;}
+    	.jspsych-content-wrapper{width: 80%;}
+    	.jspsych-content-wrapper p, h3{text-align: left;}
+    	.jspsych-content-wrapper .btn_resp_p, .jspsych-content-wrapper label{text-align: center;}
+    	.jspsych-content{width: 100%;}
+
+    </style>
+    
+</head>
+<body> 
+    <div id="jspsych-target"></div>
+</body>
+
+
+
+
+
+<script>
+
+/*********************************************************************************/
+/****************************** Global Variables *********************************/
+/*********************************************************************************/
+
+/**	Create any variables for text or csv files you are loading into the experiment
+		For text 	varName = '';
+		For csv		varName = [];
+**/
+consent = '';
+
+
+/*********************************************************************************/
+/******************************** Consent block **********************************/
+/*********************************************************************************/
+
+/** modify the text in consent_1.txt. Use HTML including <p> tags for paragraphs **/
+
+/** This reads the consent_1.txt file and stores it in a variable called consent **/
+$.ajax({
+    type: "GET", 
+    async: false, 
+    url: "stimuli/consent_1.txt", 
+    dataType: "text", 
+    success: function(txt) {consent=txtJSON(txt);}
+});
+
+/** This creates the consent block. Make sure you have the instructions plugin loaded
+	and push the block to the timeline at the bottom of the file.
+	[consent] loads the consent form
+**/
+var consent_block = {
+    type: 'instructions', 
+    pages: [consent], 
+    show_clickable_nav: true
+};
+
+
+/*********************************************************************************/
+/************************** User defined functions *******************************/
+/*********************************************************************************/
+
+/**	This reads .txt  files and stores them in a variable **/
+function txtJSON(txt){
+    var text = ''; 
+    var lines = txt.split('\n'); 
+    for (var i=0 ; i<lines.length ; i++) {
+        text = text + lines[i] ; 
+    } 
+    return text;
+};
+
+/* save data function */
+function saveData(filename, filedata){
+    $.ajax({
+        type:'post', 
+        cache: false, 
+        url: 'save_data.php', // this is the path to the PHP script 
+        data: {filename: filename, filedata: filedata} 
+    });
+};
+
+
+
+/* time stamp function, format YYYYMMDDhhmmss*/
+function stamp(){
+    var dt = new Date(); 
+    var year = dt.getFullYear(); 
+    var month = ((dt.getMonth()+1)<10?'0':'') + (dt.getMonth()+1); 
+    var day = (dt.getDate()<10?'0':'') + dt.getDate(); 
+    var hour = (dt.getHours()<10?'0':'') + dt.getHours(); 
+    var minute = (dt.getMinutes()<10?'0':'') + dt.getMinutes(); 
+    var second = (dt.getSeconds()<10?'0':'') + dt.getSeconds(); 
+    var stamp = year +''+ month +''+ day +''+ hour +''+ minute +''+ second ; 
+    return stamp;
+};
+
+/** This function is called when the experiment finishes. Add a thank you message, 
+	debriefing or direct participants somewhere else (e.g. back to prolific or mturk) 
+**/
+function finish() {
+    DOM_target = document.querySelector('#jspsych-content'); 
+    DOM_target.innerHTML ='<p>By clicking next, the participant would continue with the experiment</p>' ; 
+    jsPsych.pluginAPI.cancelAllKeyboardResponses(); 
+    jsPsych.pluginAPI.clearAllTimeouts();
+}; 
+
+/*********************************************************************************/
+/******************** Make timeline like flow in Psychopy ************************/
+/*********************************************************************************/
+
+/** This creates a variable for the timeline **/
+
+var timeline = [];
+/**	List your blocks here in the order you want them to appear
+	follow the same format as for the consent block.
+**/
+
+timeline = timeline.concat(consent_block);
+
+
+/*********************************************************************************/
+/******************************** Run jsPsych ************************************/
+/*********************************************************************************/
+
+/** This code initiates the experiment and specifies what happens
+		- After each trial (on_data_update)
+		- At the end of the experiment
+**/
+
+jsPsych.init({
+    timeline: timeline, 
+    show_progress_bar: true, 
+    /*on_finish: function(data) {jsPsych.data.displayData('csv')}, */
+    on_data_update: function(data) {
+        data = jsPsych.data.get(); //updates the data file with the most recent trial 
+    },
+    on_finish: function(data) {
+        data = jsPsych.data.get();  // updates the data file with the most recent trial
+        saveData(stamp() +'_result.csv', data.csv());  // saves the data to the server
+        finish(); //prints the message you saved in the finish() function above
+    }
+});
+
+</script>
+</html>
