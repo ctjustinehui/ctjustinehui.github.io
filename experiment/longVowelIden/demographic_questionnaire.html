@@ -1,0 +1,232 @@
+<!-- 	This Program is developed on jsPsych library by Lisa Sullivan
+		Some elements were developed by Hyoung Seok Kwon & Na-Young Ryu --> 
+<!-- Development period: from Oct 26, 2017 to April, 2020 --> 
+<!-- library location: jspsych-master/ -->
+<!-- PHP file: save_data.php --> 
+<!-- result file location and format: data/time_result.csv -->
+<!-- jsPsych.currentTimelineNodeID bug: cann't get activeID when it is called in jsPsych.init.-->
+<!-- Warning: if you provide an array that has very few valid permutations with no neighboring elements, 
+     then this method will fail and cause the browser to hang. -->
+ 
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="UTF-8"> 
+    <!-- Specify the title of your experiment here. This appears in the browser tab for the user -->
+    <title>Linguistics Experiment - First Names & Gender</title> 
+    <!-- 	this loads jquery and the main jspsych files. Do not remove (updates to more recent 
+    		versions may cause issues)
+    -->
+    <script src="jquery/jquery-3.2.1.min.js"></script> 
+    <script src="jspsych-master/jspsych.js"></script> 
+    <!-- Load your plugins here -->
+    <script src="jspsych-master/plugins/jspsych-survey-multi-choice.js"></script>
+    <script src="jspsych-master/plugins/jspsych-survey-text.js"></script>
+    <script src="jspsych-master/plugins/jspsych-survey-likert.js"></script> 
+    <!-- Loads the css file with the standard formatting -->
+    <link href="jspsych-master/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    
+    <!-- Custom CSS to make the experiment look nice -->
+    <style type="text/css">
+    	.jspsych-btn{margin: 15px;}
+    	.jspsych-content-wrapper{width: 80%;}
+    	.jspsych-content-wrapper p, h3{text-align: left;}
+    	.jspsych-content-wrapper input[type="text"], textarea{width: 100%;}
+    	.jspsych-content-wrapper .btn_resp_p, .jspsych-content-wrapper label{text-align: center;}
+    	.jspsych-content{width: 100%;}
+    	.jspsych-survey-likert-opts li input[type="radio"]{height: 30px; width: 30px; margin-bottom: 1em; margin-left: -15px !important;}
+    	.jspsych-survey-likert-opts::before{top: 20px !important;}
+    	.jspsych-content-wrapper #jspsych-survey-likert-form p{text-align:center;}
+    	.jspsych-content-wrapper #jspsych-survey-likert-form .jspsych-survey-likert-statement p{font-size: 150%;text-align: left;}
+		.jspsych-content-wrapper .jspsych-survey-multi-choice-horizontal .jspsych-survey-multi-choice-text{text-align: left;font-weight: bold;}
+    	.jspsych-content-wrapper .jspsych-survey-multi-choice-option .jspsych-survey-multi-choice-text{font-weight: normal;}
+    	.jspsych-survey-multi-choice-option input[type="radio"]{height: 20px; width: 20px; margin-bottom: 1em;}
+		.jspsych-survey-multi-choice-text span.required {display: none;}
+
+    </style>
+    
+</head>
+<body> 
+    <div id="jspsych-target"></div>
+</body>
+
+
+
+
+
+<script>
+
+
+/*******************************************************************************/
+/******************** Define demographic questionnaire *************************/
+/*******************************************************************************/
+
+/** Note: in jsPsych, each response type has to appear on a separate page. Questions
+	should be grouped accordingly.
+	
+	This questionnaire shows radio button (multiple choice), text and scale responses
+**/
+    
+/** demographics_1 contains questions with radio button responses
+	To modify the responses to the questions, modify the scale variables below
+	To add questions, add in the questions: block in the demographics_1 block
+		If necessary, create a new scale
+	The preamble appears before the questions, you can add a title or anything you want
+	your participants to know before they start this block of the questionnaire here
+	
+	Note: radio buttons can be required by adding "required: true" to the question
+	prompt (see the question about sex)
+**/
+      
+    var proficiency_scale = ["None", "Beginner", "Intermediate", "Advanced", "Native-like", "Native"];
+    var sex_scale = ["Female", "Male", "Other"];
+    var gender_scale = ["Female", "Male"];
+    var age_scale = ["<20", "20-29", "30-39", "40-49","50-59", "60-69", "70-79", "80+"];
+    
+    var demographics_1 = {
+       type: 'survey-multi-choice',
+       preamble: "<h1>Demographic Questionnaire</h1>",
+       questions: [	{prompt: "Sex", options: sex_scale, horizontal: true, name: 'sex', required: true},
+       				{prompt: "Age", options: age_scale, horizontal: true, name: 'age'},
+       				{prompt: "What is your proficiency in English?", options: proficiency_scale, horizontal: true, name: 'english'},
+       				{prompt: "What is your proficiency in Korean?", options: proficiency_scale, horizontal: true, name: 'korean'}],
+       button_label: "Next",
+       on_finish: function(data){
+        var responses = JSON.parse(data.responses); 
+        jsPsych.data.addProperties({Sex: responses.sex, Age: responses.age, English: responses.english, Korean: responses.korean}); 
+        $('html,body').scrollTop(0);
+       }
+    };
+    
+/**	demographics 2 includes text responses
+	This includes both short and long responses
+	to create a long response, increase the number of rows
+	
+	Note: text responses cannot be required automatically. See my script on participant 
+	ID (lisasullivan.ca/scripts) for a method of requiring text fields be filled in
+**/
+    
+    var demographics_2 = {
+        type: 'survey-text',
+        preamble: "<h1>Demographic Questionnaire</h1>",
+        questions: [{prompt: "Please list any other languages you speak, and your  level of proficiency (beginner, intermediate, advanced, native-like or native)", rows: 10, columns: 80},
+        			{prompt: "What country were you born in?", rows: 1, columns: 80},
+        			{prompt: "What country did you spend the majority of your childhood in (up to 18 years old)?", rows: 1, columns: 80}],
+        button_label: "Next",
+        on_finish: function(data){
+            var responses = JSON.parse(data.responses); 
+            jsPsych.data.addProperties({OtherLanguages: responses.Q0, BirthCountry: responses.Q1, ResidentCountry: responses.Q2}); 
+            $('html,body').scrollTop(0);
+        }
+    };
+    
+/**	demographics 3 includes scale responses
+	This questionnaire is modelled after Chambers & Lapierre's (2011) Language Use Index
+	(LUI)
+	
+	Elements can be modified in the same way as in demographics_1
+	
+	Note: scale responses can be required by adding "required: true" to the question
+	prompt. Change to required: false, or remove to make questions optional
+**/
+
+    var lui_scale = ["Always", "Sometimes", "Seldom", "Never"];
+
+    var demographics_3 = {
+       type: 'survey-likert',
+       preamble: "<h1>Language Use Index - English</h1><p>How often do you use English in the following ways?</p>",
+       questions: [	{prompt: "At home", labels: lui_scale, required: true},
+       				{prompt: "At work or school", labels: lui_scale, required: true},
+       				{prompt: "With your friends", labels: lui_scale, required: true},
+       				{prompt: "With your relatives", labels: lui_scale, required: true},
+       				{prompt: "In the media", labels: lui_scale, required: true}],
+       button_label: "Next",
+       on_finish: function(data){
+        var responses = JSON.parse(data.responses); 
+        jsPsych.data.addProperties({LUI_home: responses.Q0, LUI_work: responses.Q1, LUI_friends: responses.Q2, LUI_scale: responses.Q3, LUI_media: responses.Q4}); 
+        $('html,body').scrollTop(0);
+       }
+    };
+
+
+/*********************************************************************************/
+/************************** User defined functions *******************************/
+/*********************************************************************************/
+
+/* save data function */
+function saveData(filename, filedata){
+    $.ajax({
+        type:'post', 
+        cache: false, 
+        url: 'save_data.php', // this is the path to the above PHP script 
+        data: {filename: filename, filedata: filedata} 
+    });
+};
+
+
+
+/* time stamp function, format YYYYMMDDhhmmss*/
+function stamp(){
+    var dt = new Date(); 
+    var year = dt.getFullYear(); 
+    var month = ((dt.getMonth()+1)<10?'0':'') + (dt.getMonth()+1); 
+    var day = (dt.getDate()<10?'0':'') + dt.getDate(); 
+    var hour = (dt.getHours()<10?'0':'') + dt.getHours(); 
+    var minute = (dt.getMinutes()<10?'0':'') + dt.getMinutes(); 
+    var second = (dt.getSeconds()<10?'0':'') + dt.getSeconds(); 
+    var stamp = year +''+ month +''+ day +''+ hour +''+ minute +''+ second ; 
+    return stamp;
+};
+
+/** This function is called when the experiment finishes. Add a thank you message, 
+	debriefing or direct participants somewhere else (e.g. back to prolific or mturk) 
+**/
+function finish() {
+    DOM_target = document.querySelector('#jspsych-content'); 
+    DOM_target.innerHTML ='<p>By clicking next, the participant would continue with the experiment</p>' ; 
+    jsPsych.pluginAPI.cancelAllKeyboardResponses(); 
+    jsPsych.pluginAPI.clearAllTimeouts();
+}; 
+
+/*********************************************************************************/
+/******************** Make timeline like flow in Psychopy ************************/
+/*********************************************************************************/
+
+/** This creates a variable for the timeline **/
+
+var timeline = [];
+/**	List your blocks here in the order you want them to appear
+	follow the same format as for the consent block.
+**/
+
+timeline = timeline.concat(demographics_1);
+timeline = timeline.concat(demographics_2);
+timeline = timeline.concat(demographics_3);
+
+
+/*********************************************************************************/
+/******************************** Run jsPsych ************************************/
+/*********************************************************************************/
+
+/** This code initiates the experiment and specifies what happens
+		- After each trial (on_data_update)
+		- At the end of the experiment
+**/
+
+
+jsPsych.init({
+    timeline: timeline, //defines whether or not the progress bar is shown at the top of the page
+    show_progress_bar: true, 
+    /*on_finish: function(data) {jsPsych.data.displayData('csv')}, */
+    on_data_update: function(data) {
+        data = jsPsych.data.get(); //updates the data file with the most recent trial 
+    },
+    on_finish: function(data) {
+        data = jsPsych.data.get();  // updates the data file with the most recent trial
+        saveData(stamp() +'_result.csv', data.csv());  // saves the data to the server
+        finish(); //prints the message you saved in the finish() function above
+    }
+});
+
+</script>
+</html>

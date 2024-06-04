@@ -1,0 +1,1 @@
+jsPsych.plugins["PLUGIN-NAME"]=function(){var a={trial:function(a,r){r.parameter=r.parameter||"default value";var e={parameter_name:"parameter value"};jsPsych.finishTrial(e)}};return a}();

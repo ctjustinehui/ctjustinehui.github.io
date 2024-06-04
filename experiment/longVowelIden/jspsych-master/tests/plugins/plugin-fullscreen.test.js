@@ -1,0 +1,1 @@
+const root="../../";jest.useFakeTimers(),describe("fullscreen plugin",function(){beforeEach(function(){require(root+"jspsych.js"),require(root+"plugins/jspsych-fullscreen.js")}),test("loads correctly",function(){expect(typeof window.jsPsych.plugins.fullscreen).not.toBe("undefined")})});

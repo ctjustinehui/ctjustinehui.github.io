@@ -1,0 +1,1 @@
+jsPsych.plugins["call-function"]=function(){var n={};return n.info={name:"call-function",description:"",parameters:{func:{type:jsPsych.plugins.parameterType.FUNCTION,pretty_name:"Function","default":undefined,description:"Function to call"}}},n.trial=function(n,i){i.post_trial_gap=0;var t={value:i.func()};jsPsych.finishTrial(t)},n}();
