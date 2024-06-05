@@ -18,6 +18,7 @@
 <html>
 <head> 
     <meta charset="UTF-8"> 
+    <meta   http-equiv="Content-Security-Policy"   content="frame-ancestors https://docs.google.com/;" />
     <!-- Specify the title of your experiment here. This appears in the browser tab for the user -->
     <title>Listening test</title> 
     <!-- 	this loads jquery and the main jspsych files. Do not remove (updates to more recent 
@@ -78,13 +79,17 @@
 		.jspsych-html-button-response-button .jspsych-btn{font-size: 150%;width: 5em;height:3em;}
         
     </style>
-    
+
 </head>
 <body> 
-    <div id="jspsych-target"></div>
+    
+
+
+    <div id="jspsych-target">    
+
+    </div>
+
 </body>
-
-
 
 
 
@@ -98,7 +103,7 @@ inst = ''; // Variable for storing the instructions
 hVt_words=[]; // Variable for storing the input data (csv)
 noOfRepetitions = 1; 
 stimuli_continuum = [1];//[1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-practice_continuum = [1, 10]; 
+practice_continuum = [1];//[1, 10]; 
 consent = '';
 
 
@@ -208,6 +213,7 @@ $.ajax({
     success: function(csv) {hVt_words=csvJSON(csv)}
 });
 
+
 /** This randomizes the stimuli in fcnf_stimuli and stores them in a variable called
 	'fcnf_trials'.
 	It also defines how many repetitions of the stimuli there are. If you want more than 
@@ -270,11 +276,11 @@ for(var i=0; i<fcnf_words.length; i++){
                     on_finish: function(data){
                         var answer = "";
                             if(data.button_pressed == 0){
-                                answer = data.option_0;
+                                data.answer = data.option_0;
                             }else if(data.button_pressed == 1){
-                                answer = data.option_1;
+                                data.answer = data.option_1;
                             };
-                        jsPsych.data.addDataToLastTrial({responses: answer});  
+                        //jsPsych.data.addDataToLastTrial({answer: answer});  
                     } 
                 }
             );
@@ -306,11 +312,11 @@ for(var i=0; i<fcnf_words.length; i++){
                     on_finish: function(data){
                         var answer = "";
                             if(data.button_pressed == 0){
-                                answer = data.option_1;
+                                data.answer = data.option_1;
                             }else if(data.button_pressed == 1){
-                                answer = data.option_0;
+                                data.answer = data.option_0;
                             };
-                        jsPsych.data.addDataToLastTrial({responses: answer});  
+                        //jsPsych.data.addDataToLastTrial({answer: answer});  
                     } 
                 }
             );
@@ -358,11 +364,11 @@ for(var i=0; i<hVt_words.length; i++){
                     on_finish: function(data){
                         var answer = "";
                             if(data.button_pressed == 0){
-                                answer = data.option_0;
+                                data.answer = data.option_0;
                             }else if(data.button_pressed == 1){
-                                answer = data.option_1;
+                                data.answer = data.option_1;
                             };
-                        jsPsych.data.addDataToLastTrial({responses: answer});  
+                        //jsPsych.data.addDataToLastTrial({answer: answer});  
                     } 
                 }
             );
@@ -493,15 +499,35 @@ function csvJSON(csv){
 };
 
 
-
+const wait = t => new Promise((resolve, reject) => setTimeout(resolve, t));
 /* save data function */
-function saveData(filename, filedata){
+async function saveData(filename, filedata){
+    var resultsEscaped = encodeURIComponent(filedata);
+    // DOM_target = document.querySelector('#jspsych-content'); 
+    // DOM_target.innerHTML =
+    // `<iframe id="hiddenIframe" name="hiddenIframe" style="display:none;"></iframe>
+
+    // <form id="response-form" target="hiddenIframe" method="GET">
+    // </form>`;
+
+    // const form = document.getElementById('response-form');
+    // document.getElementById('response-form').target = 'hiddenIframe';
+    // form.action = "https://docs.google.com/forms/d/e/1FAIpQLSdUtwhzs44o_AvYoaKjByelgYc996tj3ldHLjPudrzxlkxKAg/formResponse?&submit=Submit?usp=pp_url&entry.231415358=" + resultsEscaped;
+    // form.submit();
+    // await wait(2000)
+
     $.ajax({
-        type:'post', 
-        cache: false, 
-        url: 'save_data.php', // this is the path to the above PHP script 
-        data: {filename: filename, filedata: filedata} 
+    type: "GET", 
+    async: false, 
+    url: "https://docs.google.com/forms/d/e/1FAIpQLSdUtwhzs44o_AvYoaKjByelgYc996tj3ldHLjPudrzxlkxKAg/formResponse?&submit=Submit?usp=pp_url&entry.231415358=" + resultsEscaped, 
+    dataType: "text"
     });
+    // $.ajax({
+    //     type:'post', 
+    //     cache: false, 
+    //     url: 'save_data.php', // this is the path to the above PHP script 
+    //     data: {filename: filename, filedata: filedata} 
+    // });
 };
 
 /**	This function plays the sound in the sound check **/
@@ -545,18 +571,18 @@ var timeline = [];
 	follow the same format as for the current blocks.
 **/
 timeline = timeline.concat(consent_block);
+
+
+//timeline = timeline.concat(sound_test);
+// timeline = timeline.concat(fcnf_instructions_block);
+// timeline = timeline.concat(practice_block);
+// timeline = timeline.concat(fcnf_instructionsAfterPractice_block);
+// timeline = timeline.concat(fcnf_block);
+// timeline = timeline.concat(fcnf_instructionsBeforeSurvey_block);
 timeline = timeline.concat(demographics_form);
-timeline = timeline.concat(demographicsText_form);
-timeline = timeline.concat(language_form);
-timeline = timeline.concat(languageUseIndex_form);
-
-timeline = timeline.concat(sound_test);
-timeline = timeline.concat(fcnf_instructions_block);
-timeline = timeline.concat(practice_block);
-timeline = timeline.concat(fcnf_instructionsAfterPractice_block);
-timeline = timeline.concat(fcnf_block);
-timeline = timeline.concat(fcnf_instructionsBeforeSurvey_block);
-
+// timeline = timeline.concat(demographicsText_form);
+// timeline = timeline.concat(language_form);
+// timeline = timeline.concat(languageUseIndex_form);
 
 /*********************************************************************************/
 /******************************** Run jsPsych ************************************/
@@ -574,9 +600,9 @@ jsPsych.init({
     on_data_update: function(data) {
         data = jsPsych.data.get(); //updates the data file with the most recent trial 
     },
-    on_finish: function(data) {
+    on_finish: async function(data) {
         data = jsPsych.data.get();  // updates the data file with the most recent trial
-        saveData(stamp() +'_result.csv', data.csv());  // saves the data to the server
+        await saveData(stamp() +'_result.csv', data.csv());  // saves the data to the server
         finish(); //prints the message you saved in the finish() function above
     }
 });
