@@ -499,35 +499,23 @@ function csvJSON(csv){
 };
 
 
-const wait = t => new Promise((resolve, reject) => setTimeout(resolve, t));
 /* save data function */
-async function saveData(filename, filedata){
+function submitData(filedata){
     var resultsEscaped = encodeURIComponent(filedata);
-    // DOM_target = document.querySelector('#jspsych-content'); 
-    // DOM_target.innerHTML =
-    // `<iframe id="hiddenIframe" name="hiddenIframe" style="display:none;"></iframe>
-
-    // <form id="response-form" target="hiddenIframe" method="GET">
-    // </form>`;
-
-    // const form = document.getElementById('response-form');
-    // document.getElementById('response-form').target = 'hiddenIframe';
-    // form.action = "https://docs.google.com/forms/d/e/1FAIpQLSdUtwhzs44o_AvYoaKjByelgYc996tj3ldHLjPudrzxlkxKAg/formResponse?&submit=Submit?usp=pp_url&entry.231415358=" + resultsEscaped;
-    // form.submit();
-    // await wait(2000)
-
     $.ajax({
     type: "GET", 
     async: false, 
     url: "https://docs.google.com/forms/d/e/1FAIpQLSdUtwhzs44o_AvYoaKjByelgYc996tj3ldHLjPudrzxlkxKAg/formResponse?&submit=Submit?usp=pp_url&entry.231415358=" + resultsEscaped, 
     dataType: "text"
     });
-    // $.ajax({
-    //     type:'post', 
-    //     cache: false, 
-    //     url: 'save_data.php', // this is the path to the above PHP script 
-    //     data: {filename: filename, filedata: filedata} 
-    // });
+
+function saveData(filename, filedata){
+    $.ajax({
+        type:'post', 
+        cache: false, 
+        url: 'save_data.php', // this is the path to the above PHP script 
+        data: {filename: filename, filedata: filedata} 
+    });
 };
 
 /**	This function plays the sound in the sound check **/
@@ -571,18 +559,16 @@ var timeline = [];
 	follow the same format as for the current blocks.
 **/
 timeline = timeline.concat(consent_block);
-
-
-//timeline = timeline.concat(sound_test);
-// timeline = timeline.concat(fcnf_instructions_block);
-// timeline = timeline.concat(practice_block);
-// timeline = timeline.concat(fcnf_instructionsAfterPractice_block);
-// timeline = timeline.concat(fcnf_block);
-// timeline = timeline.concat(fcnf_instructionsBeforeSurvey_block);
+timeline = timeline.concat(sound_test);
+timeline = timeline.concat(fcnf_instructions_block);
+timeline = timeline.concat(practice_block);
+timeline = timeline.concat(fcnf_instructionsAfterPractice_block);
+timeline = timeline.concat(fcnf_block);
+timeline = timeline.concat(fcnf_instructionsBeforeSurvey_block);
 timeline = timeline.concat(demographics_form);
-// timeline = timeline.concat(demographicsText_form);
-// timeline = timeline.concat(language_form);
-// timeline = timeline.concat(languageUseIndex_form);
+timeline = timeline.concat(demographicsText_form);
+timeline = timeline.concat(language_form);
+timeline = timeline.concat(languageUseIndex_form);
 
 /*********************************************************************************/
 /******************************** Run jsPsych ************************************/
@@ -600,9 +586,9 @@ jsPsych.init({
     on_data_update: function(data) {
         data = jsPsych.data.get(); //updates the data file with the most recent trial 
     },
-    on_finish: async function(data) {
+    on_finish:  function(data) {
         data = jsPsych.data.get();  // updates the data file with the most recent trial
-        await saveData(stamp() +'_result.csv', data.csv());  // saves the data to the server
+        submitData(data.csv());  // saves the data to the server
         finish(); //prints the message you saved in the finish() function above
     }
 });
