@@ -9,10 +9,11 @@
 
 <h3 id = "consentForm">Description of the Procedure</h3>
 <ol id = "consentForm">
-  <li>Demographics Questionnaire: Here, you will be asked questions such as language background, iwi information, education and age. In addition, there will be questions on your language learning experiences. These questions are intended to understand the nature of the participants doing this study, as these aspects are known to affect speech perception. 
-  You may also be asked about how you found the study.</li>
+
   <li>Speech perception test: Here, you will be asked to listen to some speech-like sounds and answer questions on these sounds on the computer. 
   For example, we may ask you to select the sound or word you heard from the options on the screen. </li>
+  <li>Demographics Questionnaire: Here, you will be asked questions such as language background, iwi information, education and age. In addition, there will be questions on your language learning experiences. These questions are intended to understand the nature of the participants doing this study, as these aspects are known to affect speech perception. 
+  You may also be asked about how you found the study.</li>
 
 </ol>
 
