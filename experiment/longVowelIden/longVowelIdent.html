@@ -101,7 +101,7 @@
 
 inst = ''; // Variable for storing the instructions
 hVt_words=[]; // Variable for storing the input data (csv)
-noOfRepetitions = 1; 
+noOfRepetitions = 3; 
 stimuli_continuum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 practice_continuum = [1, 10]; 
 consent = '';
@@ -145,7 +145,7 @@ var consent_block = {
 **/
 var sound_test = {
     	type: 'instructions', 
-    	pages: [ '<audio id="testAudio"><source src="sound/tone180Hz_71dB_meanSelectionOfVowelSegment.wav" type="audio/wav"></audio><h1>Sound Test</h1><p style="text-align: center;">Please test your sound by clicking the button below. You may click it multiple times to adjust your volume so you can hear it clearly.</p><button onclick="playSound()" type="button" class="snd-btn"><img src="img/sound.jpg" alt="Click to test sound" /></button>' ], 
+    	pages: [ '<audio id="testAudio"><source src="sound/tone200Hz_82dB_plus6dBFromMeanSegment.wav" type="audio/wav"></audio><h1>Sound Test</h1><p style="text-align: center;">Please test your sound by clicking the button below. You may click it multiple times to adjust your volume so you can hear it clearly.</p><button onclick="playSound()" type="button" class="snd-btn"><img src="img/sound.jpg" alt="Click to test sound" /></button>' ], 
     	show_clickable_nav: true,
     	button_label: "Next",
 };
