@@ -2605,7 +2605,12 @@ var jsPsychModule = (function (exports) {
 
     function words(options) {
       // initalize random number generator for words if options.seed is provided
-      const random = options?.seed ? new seedrandom(options.seed) : null;
+      let random = null;
+      
+      if (!!options && !!options.seed){
+            random = new seedrandom(options.seed);
+        } 
+      //const random = options?.seed ? new seedrandom(options.seed) : null;
 
       function word() {
         if (options && options.maxLength > 1) {

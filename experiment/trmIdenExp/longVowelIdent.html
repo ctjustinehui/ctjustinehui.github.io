@@ -162,10 +162,10 @@ var jsPsych = initJsPsych({
         practiceData = identificationData.filter({phase:"practice"});
         submitData(practiceData.csv());  // saves the data to  google form
         for(var i=0; i<hVt_words.length; i++){
-            //responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).first(30); //bad hardcoded!
-            //submitData(responseData.csv());  // saves the data to  google form
-            //responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).last(30);
-            //submitData(responseData.csv());  // saves the data to  google form
+            responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).first(30); //bad hardcoded!
+            submitData(responseData.csv());  // saves the data to  google form
+            responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).last(30);
+            submitData(responseData.csv());  // saves the data to  google form
         }
         finish(); //prints the message you saved in the finish() function above
     }
