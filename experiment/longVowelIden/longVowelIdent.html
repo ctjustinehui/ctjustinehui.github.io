@@ -1,7 +1,7 @@
 <!-- 	This Program is developed on jsPsych library by Lisa Sullivan
 		Some elements were developed by Hyoung Seok Kwon & Na-Young Ryu --> 
 <!-- Development period: from Oct 26, 2017 to May, 2020 --> 
-<!-- library location: jspsych-master/ -->
+<!-- library location: jspsych/ -->
 <!-- PHP file: save_data.php --> 
 <!-- result file location and format: data/time_result.csv -->
 <!-- jsPsych.currentTimelineNodeID bug: cann't get activeID when it is called in jsPsych.init.-->
@@ -18,25 +18,24 @@
 <html>
 <head> 
     <meta charset="UTF-8"> 
-    <meta   http-equiv="Content-Security-Policy"   content="frame-ancestors https://docs.google.com/;" />
     <!-- Specify the title of your experiment here. This appears in the browser tab for the user -->
     <title>Listening test</title> 
     <!-- 	this loads jquery and the main jspsych files. Do not remove (updates to more recent 
     		versions may cause issues)
     -->
     <script src="jquery/jquery-3.2.1.min.js"></script> 
-    <script src="jspsych-master/jspsych.js"></script> 
+    <script src="jspsych/jspsych.js"></script> 
     <!-- Load your plugins here -->
-    <script src="jspsych-master/plugins/jspsych-instructions.js"></script> 
-    <script src="jspsych-master/plugins/jspsych-survey-text.js"></script> 
-    <script src="jspsych-master/plugins/jspsych-survey-multi-choice.js"></script> 
-    <script src="jspsych-master/plugins/jspsych-survey-likert.js"></script> 
-    <script src="jspsych-master/plugins/jspsych-survey-html-form.js"></script> 
-    <script src="jspsych-master/plugins/jspsych-audio-keyboard-response.js"></script> 
-    <script src="jspsych-master/plugins/jspsych-categorize-html.js"></script>
-    <script src="jspsych-master/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych/plugin-instructions.js"></script> 
+    <script src="jspsych/plugin-survey-text.js"></script> 
+    <script src="jspsych/plugin-survey-multi-choice.js"></script> 
+    <script src="jspsych/plugin-survey-likert.js"></script> 
+    <script src="jspsych/plugin-survey-html-form.js"></script> 
+    <script src="jspsych/plugin-audio-keyboard-response.js"></script> 
+    <script src="jspsych/plugin-categorize-html.js"></script>
+    <script src="jspsych/plugin-html-button-response.js"></script> 
     <!-- Loads the css file with the standard formatting -->
-    <link href="jspsych-master/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+    <link href="jspsych/jspsych.css" rel="stylesheet" type="text/css"></link>
     
     <!-- Custom CSS to make the experiment look nice -->
     <style type="text/css">
@@ -94,27 +93,20 @@
 
 
 <script>
-
 /*********************************************************************************/
 /****************************** Global Variables *********************************/
 /*********************************************************************************/
 
 inst = ''; // Variable for storing the instructions
 hVt_words=[]; // Variable for storing the input data (csv)
-noOfRepetitions = 3; 
+noOfRepetitions = 3; // will be multiplied by 2
 stimuli_continuum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 practice_continuum = [1, 10]; 
 consent = '';
-
-
-
-
+participantID = '';
 /*********************************************************************************/
-/******************************** Consent block **********************************/
+/****************************** Reading file data ********************************/
 /*********************************************************************************/
-
-/** modify the text in consent_1.txt. Use HTML including <p> tags for paragraphs **/
-
 /** This reads the consent_1.txt file and stores it in a variable called consent **/
 $.ajax({
     type: "GET", 
@@ -124,12 +116,80 @@ $.ajax({
     success: function(txt) {consent=txtJSON(txt);}
 });
 
+/** This reads in the text in fcnf_instructions.txt and stores it in a variable called
+	'inst'.
+**/
+$.ajax({
+    type: "GET", 
+    async: false, 
+    url: "stimuli/fcnf_instructions.txt", 
+    dataType: "text", 
+    success: function(txt) {inst=txtJSON(txt);}
+});
+
+
+/** This reads in the data for the experiment from in fcnf_stimuli.csv and stores it in 
+	a variable called 'fcnf_stimuli'.
+**/
+$.ajax({
+    type: "GET", 
+    async: false, 
+    url: "stimuli/hVt_stimuli.csv", 
+    dataType: "text", 
+    success: function(csv) {hVt_words=csvJSON(csv)}
+});
+
+
+
+/*********************************************************************************/
+/****************************** Initialising jsPsych *****************************/
+/*********************************************************************************/
+var jsPsych = initJsPsych({
+    
+    show_progress_bar: true, 
+    default_iti : 300,
+    on_data_update: function(data) {
+        data = jsPsych.data.get(); //updates the data file with the most recent trial 
+    },
+    on_finish:  function(data) {
+        data = jsPsych.data.get();  // updates the data file with the most recent trial
+
+        identificationData = jsPsych.data.get().filter([{phase: "practice"}, {phase:"iden_exp"}]);  // only getting response phases
+        identificationData = identificationData.ignore(['internal_node_id', 'trial_type']);  // ignoring internal node id
+        //identificationData = identificationData.ignore('trial_type');  // ignoring trial_type
+        identificationData.localSave('csv','longShortVowelIden_myData.csv'); //save locally
+
+        practiceData = identificationData.filter({phase:"practice"});
+        submitData(practiceData.csv());  // saves the data to  google form
+        for(var i=0; i<hVt_words.length; i++){
+            responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).first(30); //bad hardcoded!
+            submitData(responseData.csv());  // saves the data to  google form
+            responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).last(30);
+            submitData(responseData.csv());  // saves the data to  google form
+        }
+        finish(); //prints the message you saved in the finish() function above
+    }
+  
+});
+
+participantID = jsPsych.randomization.randomID(8);
+jsPsych.data.addProperties({participantID: participantID}); //add participant ID      
+
+
+/*********************************************************************************/
+/******************************** Consent block **********************************/
+/*********************************************************************************/
+
+/** modify the text in consent_1.txt. Use HTML including <p> tags for paragraphs **/
+
+
+
 /** This creates the consent block. Make sure you have the instructions plugin loaded
 	and push the block to the timeline at the bottom of the file.
 	[consent] loads the consent form
 **/
 var consent_block = {
-    type: 'instructions', 
+    type: jsPsychInstructions, 
     pages: [consent], 
     show_clickable_nav: true
 };
@@ -144,7 +204,7 @@ var consent_block = {
 	allow auto-loading of sound without the user manually playing the sound first
 **/
 var sound_test = {
-    	type: 'instructions', 
+    	type: jsPsychInstructions, 
     	pages: [ '<audio id="testAudio"><source src="sound/tone200Hz_82dB_plus6dBFromMeanSegment.wav" type="audio/wav"></audio><h1>Sound Test</h1><p style="text-align: center;">Please test your sound by clicking the button below. You may click it multiple times to adjust your volume so you can hear it clearly.</p><button onclick="playSound()" type="button" class="snd-btn"><img src="img/sound.jpg" alt="Click to test sound" /></button>' ], 
     	show_clickable_nav: true,
     	button_label: "Next",
@@ -154,32 +214,19 @@ var sound_test = {
 /******************************** Instruction block **********************************/
 /*************************************************************************************/
 
-/** modify the text in fcnf_instructions.txt. **/
-
-/** This reads in the text in fcnf_instructions.txt and stores it in a variable called
-	'inst'.
-**/
-$.ajax({
-    type: "GET", 
-    async: false, 
-    url: "stimuli/fcnf_instructions.txt", 
-    dataType: "text", 
-    success: function(txt) {inst=txtJSON(txt);}
-});
-
 /**	Loads the instructions
 	To modify instructions, modify fcnf_instructions.txt using full HTML (including <p>
 	tags)
 	Push this block to the timeline below
 **/
 var fcnf_instructions_block = {
-    type: 'instructions', 
+    type: jsPsychInstructions, 
     pages: [inst], 
     show_clickable_nav: true
 };
 
 var fcnf_instructionsAfterPractice_block = {
-    type: 'instructions', 
+    type: jsPsychInstructions, 
     pages: [
     '<p style="text-align: center;">The practice session has finished. Please click Next to continue to the experiment. Remember that the position of the buttons may swap during the test. <\p>',
     ],
@@ -188,7 +235,7 @@ var fcnf_instructionsAfterPractice_block = {
 }
 
 var fcnf_instructionsBeforeSurvey_block = {
-    type: 'instructions', 
+    type: jsPsychInstructions, 
     pages: [
     '<p style="text-align: center;">The experiment has finished. Please click Next to continue to the demographics survey.<\p>',
     ],
@@ -202,16 +249,6 @@ var fcnf_instructionsBeforeSurvey_block = {
 /*************************** Define experiment block *******************************/
 /*********************************************************************************/
 
-/** This reads in the data for the experiment from in fcnf_stimuli.csv and stores it in 
-	a variable called 'fcnf_stimuli'.
-**/
-$.ajax({
-    type: "GET", 
-    async: false, 
-    url: "stimuli/hVt_stimuli.csv", 
-    dataType: "text", 
-    success: function(csv) {hVt_words=csvJSON(csv)}
-});
 
 
 /** This randomizes the stimuli in fcnf_stimuli and stores them in a variable called
@@ -243,84 +280,101 @@ for(var i=0; i<fcnf_words.length; i++){
     currentWord = fcnf_words[i];
     fcnf_block.push(
         {
-            type: 'instructions', 
+            type: jsPsychInstructions, 
             pages: [ '<h1>Set ' + currentSetNo + '</h1><p style="text-align: center;">There are '+ totalSet + ' in total. Please click NEXT to proceed, take a break if you need to. </p>' ], 
             show_clickable_nav: true,
             button_label: "Next",
         }
     );
-    
-    fcnf_trials = jsPsych.randomization.shuffle(stimuli_continuum);
-    for (var k=0; k<fcnf_trials.length; k++){
-            /**	Plays the sound **/
-            fcnf_block.push(
-                {
-                    type: 'audio-keyboard-response', 
-                    stimulus: 'sound/'+ currentWord.sound+'_'+ fcnf_trials[k] + '.wav', 
-                    prompt: '<img src="img/sound.jpg" height="200" width="200">', 
-                    choices: jsPsych.NO_KEYS, 
-                    trial_duration: 1500, 
-                }
-            );
-            fcnf_block.push(
-                {
-                    type: 'html-button-response', 
-                    stimulus: '<h1>What word did you hear?</h1>', 
-                    choices: [currentWord.textOption_1,currentWord.textOption_2], 
-                    data: {phase: 'iden_exp', 
-                            word: currentWord.word, 
-                            stimulus: fcnf_trials[k], 
-                            option_0: currentWord.option_1, 
-                            option_1: currentWord.option_2, 
-                            sound: currentWord.sound},
-                    on_finish: function(data){
-                        var answer = "";
-                            if(data.button_pressed == 0){
-                                data.answer = data.option_0;
-                            }else if(data.button_pressed == 1){
-                                data.answer = data.option_1;
-                            };
-                        //jsPsych.data.addDataToLastTrial({answer: answer});  
-                    } 
-                }
-            );
+    for (var j=0; j<noOfRepetitions; j++){
+        fcnf_trials = jsPsych.randomization.shuffle(stimuli_continuum);
+        block = j+1;
+        for (var k=0; k<fcnf_trials.length; k++){
+                /**	Plays the sound **/
+                fcnf_block.push(
+                    {
+                        type: jsPsychAudioKeyboardResponse, 
+                        stimulus: 'sound/'+ currentWord.sound+'_'+ fcnf_trials[k] + '.wav', 
+                        prompt: '<img src="img/sound.jpg" height="200" width="200">', 
+                        choices: "NO_KEYS", 
+                        trial_duration: 1500, 
+                    }
+                );
+                fcnf_block.push(
+                    {
+                        type: jsPsychHtmlButtonResponse, 
+                        stimulus: '<h1>What word did you hear?</h1>', 
+                        choices: [currentWord.textOption_1,currentWord.textOption_2], 
+                        data: {phase: 'iden_exp', 
+                                word: currentWord.word, 
+                                block: block,
+                                stimulus: fcnf_trials[k], 
+                                option_0: currentWord.option_1, 
+                                option_1: currentWord.option_2, 
+                                //sound: currentWord.sound
+                            },
+                        on_finish: function(data){
+                            var answer = "";
+                                if(data.button_pressed == 0){
+                                    data.answer = data.option_0;
+                                }else if(data.button_pressed == 1){
+                                    data.answer = data.option_1;
+                                };
+                            jsPsych.data.addDataToLastTrial({answer: answer});  
+                        } 
+                    }
+                );
+            };
         };
     // swapping button locations every set
-    fcnf_trials = jsPsych.randomization.shuffle(stimuli_continuum);
-    for (var k=0; k<fcnf_trials.length; k++){
-            /**	Plays the sound **/
-            fcnf_block.push(
-                {
-                    type: 'audio-keyboard-response', 
-                    stimulus: 'sound/'+ currentWord.sound+'_'+ fcnf_trials[k] + '.wav', 
-                    prompt: '<img src="img/sound.jpg" height="200" width="200">', 
-                    choices: jsPsych.NO_KEYS, 
-                    trial_duration: 1500, 
-                }
-            );
-            fcnf_block.push(
-                {
-                    type: 'html-button-response', 
-                    stimulus: '<h1>What word did you hear?</h1>', 
-                    choices: [currentWord.textOption_2,currentWord.textOption_1], 
-                    data: {phase: 'iden_exp', 
-                            word: currentWord.word, 
-                            stimulus: fcnf_trials[k], 
-                            option_0: currentWord.option_1, 
-                            option_1: currentWord.option_2, 
-                            sound: currentWord.sound},
-                    on_finish: function(data){
-                        var answer = "";
-                            if(data.button_pressed == 0){
-                                data.answer = data.option_1;
-                            }else if(data.button_pressed == 1){
-                                data.answer = data.option_0;
-                            };
-                        //jsPsych.data.addDataToLastTrial({answer: answer});  
-                    } 
-                }
-            );
+    fcnf_block.push(
+        {
+            type: jsPsychInstructions, 
+            pages: [ '<p style="text-align: center;">The buttons are now swapped. Please click NEXT to proceed, take a break if you need to. </p>' ], 
+            show_clickable_nav: true,
+            button_label: "Next",
+        }
+    );
+    for (var j=0; j<noOfRepetitions; j++){
+        fcnf_trials = jsPsych.randomization.shuffle(stimuli_continuum);
+        block = j + 4;
+        for (var k=0; k<fcnf_trials.length; k++){
+                /**	Plays the sound **/
+                fcnf_block.push(
+                    {
+                        type: jsPsychAudioKeyboardResponse, 
+                        stimulus: 'sound/'+ currentWord.sound+'_'+ fcnf_trials[k] + '.wav', 
+                        prompt: '<img src="img/sound.jpg" height="200" width="200">', 
+                        choices: "NO_KEYS", 
+                        trial_duration: 1500, 
+                    }
+                );
+                fcnf_block.push(
+                    {
+                        type: jsPsychHtmlButtonResponse, 
+                        stimulus: '<h1>What word did you hear?</h1>', 
+                        choices: [currentWord.textOption_2,currentWord.textOption_1], 
+                        data: {phase: 'iden_exp', 
+                                word: currentWord.word, 
+                                block: block,
+                                stimulus: fcnf_trials[k], 
+                                option_0: currentWord.option_1, 
+                                option_1: currentWord.option_2, 
+                                //sound: currentWord.sound
+                            },
+                        on_finish: function(data){
+                            var answer = "";
+                                if(data.button_pressed == 0){
+                                    data.answer = data.option_1;
+                                }else if(data.button_pressed == 1){
+                                    data.answer = data.option_0;
+                                };
+                            jsPsych.data.addDataToLastTrial({answer: answer});  
+                        } 
+                    }
+                );
         };
+    };
 }
 
 /*********************************************************************************/
@@ -329,7 +383,7 @@ for(var i=0; i<fcnf_words.length; i++){
 var practice_block = [];
 practice_block.push(
         {
-            type: 'instructions', 
+            type: jsPsychInstructions, 
             pages: [ '<h1>Let us practice! </h1><br/><p style="text-align: center;">There are '+ totalSet + ' in total. You will need to click on the word that you heard. Please click Next to proceed. </p>' ], 
             show_clickable_nav: true,
             button_label: "Next",
@@ -343,16 +397,16 @@ for(var i=0; i<hVt_words.length; i++){
             /**	Plays the sound **/
             practice_block.push(
                 {
-                    type: 'audio-keyboard-response', 
+                    type: jsPsychAudioKeyboardResponse, 
                     stimulus: 'sound/'+ currentWord.sound+'_'+ practice_continuum[k] + '.wav', 
                     prompt: '<img src="img/sound.jpg" height="200" width="200">', 
-                    choices: jsPsych.NO_KEYS, 
-                    trial_duration: 1500, 
+                    choices: "NO_KEYS", 
+                    trial_duration: 1550, 
                 }
             );
             practice_block.push(
                 {
-                    type: 'html-button-response', 
+                    type: jsPsychHtmlButtonResponse, 
                     stimulus: '<h1>What word did you hear?</h1>', 
                     choices: [currentWord.textOption_1,currentWord.textOption_2], 
                     data: {phase: 'practice', 
@@ -360,7 +414,8 @@ for(var i=0; i<hVt_words.length; i++){
                             stimulus: practice_continuum[k], 
                             option_0: currentWord.option_1, 
                             option_1: currentWord.option_2, 
-                            sound: currentWord.sound},
+                            //sound: currentWord.sound
+                        },
                     on_finish: function(data){
                         var answer = "";
                             if(data.button_pressed == 0){
@@ -368,7 +423,7 @@ for(var i=0; i<hVt_words.length; i++){
                             }else if(data.button_pressed == 1){
                                 data.answer = data.option_1;
                             };
-                        //jsPsych.data.addDataToLastTrial({answer: answer});  
+                        jsPsych.data.addDataToLastTrial({answer: answer});  
                     } 
                 }
             );
@@ -378,90 +433,90 @@ for(var i=0; i<hVt_words.length; i++){
 /*******************************************************************************/
 /******************** Define demographic questionnaire *************************/
 /*******************************************************************************/
-var hearing_scale = ["Yes", "No", "Not sure"];
-var sex_scale = ["Female", "Male", "Gender diverse", "Prefer not to answer"];
+// var hearing_scale = ["Yes", "No", "Not sure"];
+// var sex_scale = ["Female", "Male", "Gender diverse", "Prefer not to answer"];
     
-var demographics_form = {
-    type: 'survey-multi-choice',
-    preamble: "<h1>Demographic Questionnaire</h1>",
-    questions: [{prompt: "Sex", options: sex_scale, horizontal: true, name: 'sex', required: true},
-                {prompt: "Do you experience any hearing loss? ", options: hearing_scale, horizontal: true, name: 'hearingLoss', required: true}],
-    button_label: "Next",
-    on_finish: function(data){
-    var responses = JSON.parse(data.responses); 
-    jsPsych.data.addProperties({sex: responses.sex,  hearingLoss: responses.hearingLoss}); 
-    $('html,body').scrollTop(0);
-    }
-};
+// var demographics_form = {
+//     type: 'survey-multi-choice',
+//     preamble: "<h1>Demographic Questionnaire</h1>",
+//     questions: [{prompt: "Sex", options: sex_scale, horizontal: true, name: 'sex', required: true},
+//                 {prompt: "Do you experience any hearing loss? ", options: hearing_scale, horizontal: true, name: 'hearingLoss', required: true}],
+//     button_label: "Next",
+//     on_finish: function(data){
+//     var responses = JSON.parse(data.responses); 
+//     jsPsych.data.addProperties({sex: responses.sex,  hearingLoss: responses.hearingLoss}); 
+//     $('html,body').scrollTop(0);
+//     }
+// };
     
-var demographicsText_form = {
-    type: 'survey-text',
-    preamble: "<h1>Demographic Questionnaire</h1>",
-    questions: [{prompt: "Age:", rows: 1, columns: 10},
-                {prompt: "Iwi/hapū (if applicable)", rows: 2, columns: 30},
-                {prompt: "Ethnicity", rows: 2, columns: 30},
-                {prompt: "Occupation", rows: 2, columns: 30},
-                {prompt: "What is your highest level of education", rows: 2, columns: 30}
-                ],
-    button_label: "Next",
-    on_finish: function(data){
-        var responses = JSON.parse(data.responses); 
-        jsPsych.data.addProperties({age: responses.Q0, iwi: responses.Q1, ethinicity: responses.Q2, occupation: responses.Q3, education: responses.Q4}); 
-        $('html,body').scrollTop(0);
-    }
-};
-/**	demographics 2 includes text responses
-	This includes both short and long responses
-	to create a long response, increase the number of rows
+// var demographicsText_form = {
+//     type: 'survey-text',
+//     preamble: "<h1>Demographic Questionnaire</h1>",
+//     questions: [{prompt: "Age:", rows: 1, columns: 10},
+//                 {prompt: "Iwi/hapū (if applicable)", rows: 2, columns: 30},
+//                 {prompt: "Ethnicity", rows: 2, columns: 30},
+//                 {prompt: "Occupation", rows: 2, columns: 30},
+//                 {prompt: "What is your highest level of education", rows: 2, columns: 30}
+//                 ],
+//     button_label: "Next",
+//     on_finish: function(data){
+//         var responses = JSON.parse(data.responses); 
+//         jsPsych.data.addProperties({age: responses.Q0, iwi: responses.Q1, ethinicity: responses.Q2, occupation: responses.Q3, education: responses.Q4}); 
+//         $('html,body').scrollTop(0);
+//     }
+// };
+// /**	demographics 2 includes text responses
+// 	This includes both short and long responses
+// 	to create a long response, increase the number of rows
 	
-	Note: text responses cannot be required automatically. See my script on participant 
-	ID (lisasullivan.ca/scripts) for a method of requiring text fields be filled in
-**/
+// 	Note: text responses cannot be required automatically. See my script on participant 
+// 	ID (lisasullivan.ca/scripts) for a method of requiring text fields be filled in
+// **/
     
-var language_form = {
-    type: 'survey-text',
-    preamble: "<h1>Language related questions</h1>",
-    questions: [{prompt: "Please list any languages you speak, and your level of proficiency (beginner, intermediate, advanced, native-like or native)", rows: 5, columns: 80},
-                {prompt: "Were you born in New Zealand? If not, at what age did you arrive?", rows: 2, columns: 80},
-                {prompt: "What country/countries did you spend the majority of your childhood in (up to 18 years old)?", rows: 2, columns: 80},
-                {prompt: "Did you do your schooling in New Zealand? If so, please specify whether it is primary school, intermediate, high school, tertiary education. ", rows: 5, columns: 80},
-                {prompt: "Please list your te reo Māori learning experiences, e.g., beginner's course, primary school, high school, university courses, kura/immersion schools, from whānau.", rows: 5, columns: 80},
-                {prompt: "Do your whānau speak te reo Māori? e.g., parents, siblings, grandparents, please specify. ", rows: 5, columns: 80}],
-    button_label: "Next",
-    on_finish: function(data){
-        var responses = JSON.parse(data.responses); 
-        jsPsych.data.addProperties({languages: responses.Q0, nzBorn: responses.Q1, residentCountry: responses.Q2, schoolingLocation: responses.Q3, trmExperience: responses.Q4, trmFamily: responses.Q5}); 
-        $('html,body').scrollTop(0);
-    }
-};
+// var language_form = {
+//     type: 'survey-text',
+//     preamble: "<h1>Language related questions</h1>",
+//     questions: [{prompt: "Please list any languages you speak, and your level of proficiency (beginner, intermediate, advanced, native-like or native)", rows: 5, columns: 80},
+//                 {prompt: "Were you born in New Zealand? If not, at what age did you arrive?", rows: 2, columns: 80},
+//                 {prompt: "What country/countries did you spend the majority of your childhood in (up to 18 years old)?", rows: 2, columns: 80},
+//                 {prompt: "Did you do your schooling in New Zealand? If so, please specify whether it is primary school, intermediate, high school, tertiary education. ", rows: 5, columns: 80},
+//                 {prompt: "Please list your te reo Māori learning experiences, e.g., beginner's course, primary school, high school, university courses, kura/immersion schools, from whānau.", rows: 5, columns: 80},
+//                 {prompt: "Do your whānau speak te reo Māori? e.g., parents, siblings, grandparents, please specify. ", rows: 5, columns: 80}],
+//     button_label: "Next",
+//     on_finish: function(data){
+//         var responses = JSON.parse(data.responses); 
+//         jsPsych.data.addProperties({languages: responses.Q0, nzBorn: responses.Q1, residentCountry: responses.Q2, schoolingLocation: responses.Q3, trmExperience: responses.Q4, trmFamily: responses.Q5}); 
+//         $('html,body').scrollTop(0);
+//     }
+// };
     
-/**	demographics 3 includes scale responses
-	This questionnaire is modelled after Chambers & Lapierre's (2011) Language Use Index
-	(LUI)
+// /**	demographics 3 includes scale responses
+// 	This questionnaire is modelled after Chambers & Lapierre's (2011) Language Use Index
+// 	(LUI)
 	
-	Elements can be modified in the same way as in demographics_1
+// 	Elements can be modified in the same way as in demographics_1
 	
-	Note: scale responses can be required by adding "required: true" to the question
-	prompt. Change to required: false, or remove to make questions optional
-**/
+// 	Note: scale responses can be required by adding "required: true" to the question
+// 	prompt. Change to required: false, or remove to make questions optional
+// **/
 
-    var lui_scale = ["Always", "Sometimes", "Seldom", "Never"];
+//     var lui_scale = ["Always", "Sometimes", "Seldom", "Never"];
 
-    var languageUseIndex_form = {
-       type: 'survey-likert',
-       preamble: "<h1>Language Use Index - te reo Māori</h1><h2>How often do you use te reo Māori in the following ways?</h2>",
-       questions: [	{prompt: "At home", labels: lui_scale, required: true},
-       				{prompt: "At work or school", labels: lui_scale, required: true},
-       				{prompt: "With your friends", labels: lui_scale, required: true},
-       				{prompt: "With your whānau", labels: lui_scale, required: true},
-       				{prompt: "In the media", labels: lui_scale, required: true}],
-       button_label: "Next",
-       on_finish: function(data){
-        var responses = JSON.parse(data.responses); 
-        jsPsych.data.addProperties({LUI_home: responses.Q0, LUI_work: responses.Q1, LUI_friends: responses.Q2, LUI_scale: responses.Q3, LUI_media: responses.Q4}); 
-        $('html,body').scrollTop(0);
-       }
-    };
+//     var languageUseIndex_form = {
+//        type: 'survey-likert',
+//        preamble: "<h1>Language Use Index - te reo Māori</h1><h2>How often do you use te reo Māori in the following ways?</h2>",
+//        questions: [	{prompt: "At home", labels: lui_scale, required: true},
+//        				{prompt: "At work or school", labels: lui_scale, required: true},
+//        				{prompt: "With your friends", labels: lui_scale, required: true},
+//        				{prompt: "With your whānau", labels: lui_scale, required: true},
+//        				{prompt: "In the media", labels: lui_scale, required: true}],
+//        button_label: "Next",
+//        on_finish: function(data){
+//         var responses = JSON.parse(data.responses); 
+//         jsPsych.data.addProperties({LUI_home: responses.Q0, LUI_work: responses.Q1, LUI_friends: responses.Q2, LUI_scale: responses.Q3, LUI_media: responses.Q4}); 
+//         $('html,body').scrollTop(0);
+//        }
+//     };
 
 /*********************************************************************************/
 /************************** User defined functions *******************************/
@@ -501,6 +556,7 @@ function csvJSON(csv){
 
 /* save data function */
 function submitData(filedata){
+    
     var resultsEscaped = encodeURIComponent(filedata);
     $.ajax({
     type: "GET", 
@@ -544,7 +600,9 @@ function stamp(){
 **/
 function finish() {
     DOM_target = document.querySelector('#jspsych-content'); 
-    DOM_target.innerHTML ='<p style="text-align: center;">This is the end of the listening task. Thank you very much for your participation! You may close the window now. </p>' ; 
+    linkToPrefilledGoogleForm = 'https://docs.google.com/forms/d/e/1FAIpQLSeZkgvLJtpdoHSYwz_UbGytqLV7XEEZlAKpC2rZfo67g2RLDw/viewform?usp=pp_url&entry.1797296953=' + participantID;
+    DOM_target.innerHTML ='<p style="text-align: center;">This is the end of the listening task. Thank you very much for your participation! </p><br/>\
+    <p style="text-align: center;">Please click <a href="' + linkToPrefilledGoogleForm + '",target="_blank">here</a> to proceed to the demographics survey. </p>' ; 
     jsPsych.pluginAPI.cancelAllKeyboardResponses(); 
     jsPsych.pluginAPI.clearAllTimeouts();
 }; 
@@ -566,10 +624,10 @@ timeline = timeline.concat(practice_block);
 timeline = timeline.concat(fcnf_instructionsAfterPractice_block);
 timeline = timeline.concat(fcnf_block);
 timeline = timeline.concat(fcnf_instructionsBeforeSurvey_block);
-timeline = timeline.concat(demographics_form);
-timeline = timeline.concat(demographicsText_form);
-timeline = timeline.concat(language_form);
-timeline = timeline.concat(languageUseIndex_form);
+// timeline = timeline.concat(demographics_form);
+// timeline = timeline.concat(demographicsText_form);
+// timeline = timeline.concat(language_form);
+// timeline = timeline.concat(languageUseIndex_form);
 
 /*********************************************************************************/
 /******************************** Run jsPsych ************************************/
@@ -580,19 +638,26 @@ timeline = timeline.concat(languageUseIndex_form);
 		- At the end of the experiment
 **/
 
-jsPsych.init({
-    timeline: timeline, 
-    show_progress_bar: true, 
-    /*on_finish: function(data) {jsPsych.data.displayData('csv')}, */
-    on_data_update: function(data) {
-        data = jsPsych.data.get(); //updates the data file with the most recent trial 
-    },
-    on_finish:  function(data) {
-        data = jsPsych.data.get();  // updates the data file with the most recent trial
-        submitData(data.csv());  // saves the data to the server
-        finish(); //prints the message you saved in the finish() function above
-    }
-});
+
+//jsPsych.run(timeline);
+jsPsych.simulate(timeline);
+// jsPsych.init({
+//     timeline: timeline, 
+//     show_progress_bar: true, 
+//     default_iti : 300,
+//     /*on_finish: function(data) {jsPsych.data.displayData('csv')}, */
+//     on_data_update: function(data) {
+//         data = jsPsych.data.get(); //updates the data file with the most recent trial 
+//     },
+//     on_finish:  function(data) {
+//         data = jsPsych.data.get();  // updates the data file with the most recent trial      
+//         jsPsych.data.addProperties({participantID: participantID}); //add participant ID
+//         identificationData = jsPsych.data.get().filter([{phase: "practice"}, {phase:"iden_exp"}]);  // only getting response phases
+//         identificationData.localSave('csv','longShortVowelIden_myData.csv'); //save locally
+//         submitData(identificationData.csv());  // saves the data to  google form
+//         finish(); //prints the message you saved in the finish() function above
+//     }
+// });
 
 </script>
 </html>
