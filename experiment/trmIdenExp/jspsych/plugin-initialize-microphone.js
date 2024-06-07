@@ -1,0 +1,15 @@
+var jsPsychInitializeMicrophone=function(e){"use strict";
+/******************************************************************************
+    Copyright (c) Microsoft Corporation.
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+    ***************************************************************************** */function i(e,i,t,n){function c(e){return e instanceof t?e:new t(function(i){i(e)})}return new(t||(t=Promise))(function(t,o){function r(e){try{a(n.next(e))}catch(i){o(i)}}function s(e){try{a(n["throw"](e))}catch(i){o(i)}}function a(e){e.done?t(e.value):c(e.value).then(r,s)}a((n=n.apply(e,i||[])).next())})}"function"==typeof SuppressedError&&SuppressedError;const t={name:"initialize-microphone",parameters:{device_select_message:{type:e.ParameterType.HTML_STRING,"default":"<p>Please select the microphone you would like to use.</p>"},button_label:{type:e.ParameterType.STRING,"default":"Use this microphone"}}};class n{constructor(e){this.jsPsych=e}trial(e,i){this.run_trial(e,i).then(e=>{this.jsPsych.finishTrial({device_id:e})})}run_trial(e,t){return i(this,void 0,void 0,function*(){yield this.askForPermission(),this.showMicrophoneSelection(e,t),this.updateDeviceList(e),navigator.mediaDevices.ondevicechange=(()=>{this.updateDeviceList(e)});const i=yield this.waitForSelection(e),n=yield navigator.mediaDevices.getUserMedia({audio:{deviceId:i}});return this.jsPsych.pluginAPI.initializeMicrophoneRecorder(n),i})}askForPermission(){return i(this,void 0,void 0,function*(){return yield navigator.mediaDevices.getUserMedia({audio:!0,video:!1})})}showMicrophoneSelection(e,i){let t=`\n      ${i.device_select_message}\n      <select name="mic" id="which-mic" style="font-size:14px; font-family: 'Open Sans', 'Arial', sans-serif; padding: 4px;">\n      </select>\n      <p><button class="jspsych-btn" id="btn-select-mic">${i.button_label}</button></p>`;e.innerHTML=t}waitForSelection(e){return new Promise(i=>{e.querySelector("#btn-select-mic").addEventListener("click",()=>{const t=e.querySelector("#which-mic").value;i(t)})})}updateDeviceList(e){navigator.mediaDevices.enumerateDevices().then(i=>{const t=i.filter(e=>"audioinput"===e.kind&&"default"!==e.deviceId&&"communications"!==e.deviceId).filter((e,i,t)=>t.findIndex(i=>i.groupId==e.groupId)==i);e.querySelector("#which-mic").innerHTML="",t.forEach(i=>{let t=document.createElement("option");t.value=i.deviceId,t.innerHTML=i.label,e.querySelector("#which-mic").appendChild(t)})})}}return n.info=t,n}(jsPsychModule);

@@ -1,0 +1,15 @@
+var jsPsychExtensionRecordVideo=function(){"use strict";
+/******************************************************************************
+    Copyright (c) Microsoft Corporation.
+
+    Permission to use, copy, modify, and/or distribute this software for any
+    purpose with or without fee is hereby granted.
+
+    THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+    REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+    AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+    INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+    LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+    OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+    PERFORMANCE OF THIS SOFTWARE.
+    ***************************************************************************** */function t(t,e,r,n){function o(t){return t instanceof r?t:new r(function(e){e(t)})}return new(r||(r=Promise))(function(r,i){function a(t){try{c(n.next(t))}catch(e){i(e)}}function s(t){try{c(n["throw"](t))}catch(e){i(e)}}function c(t){t.done?r(t.value):o(t.value).then(a,s)}c((n=n.apply(t,e||[])).next())})}function e(t){return t&&t.__esModule&&Object.prototype.hasOwnProperty.call(t,"default")?t["default"]:t}"function"==typeof SuppressedError&&SuppressedError;const r=t=>{const e=new Set;do{for(const r of Reflect.ownKeys(t))e.add([t,r])}while((t=Reflect.getPrototypeOf(t))&&t!==Object.prototype);return e};var n=e((t,{include:e,exclude:n}={})=>{const o=t=>{const r=e=>"string"==typeof e?t===e:e.test(t);return e?e.some(r):!n||!n.some(r)};for(const[e,n]of r(t.constructor.prototype)){if("constructor"===n||!o(n))continue;const r=Reflect.getOwnPropertyDescriptor(e,n);r&&"function"==typeof r.value&&(t[n]=t[n].bind(t))}return t});class o{constructor(e){this.jsPsych=e,this.recordedChunks=[],this.recorder=null,this.currentTrialData=null,this.trialComplete=!1,this.onUpdateCallback=null,this.initialize=(()=>t(this,void 0,void 0,function*(){})),this.on_start=(()=>{this.recorder=this.jsPsych.pluginAPI.getCameraRecorder(),this.recordedChunks=[],this.trialComplete=!1,this.currentTrialData={},this.recorder?this.recorder.addEventListener("dataavailable",this.handleOnDataAvailable):console.warn("The record-video extension is trying to start but the camera is not initialized. Do you need to run the initialize-camera plugin?")}),this.on_load=(()=>{this.recorder.start()}),this.on_finish=(()=>new Promise(t=>{this.trialComplete=!0,this.recorder.stop(),this.currentTrialData.record_video_data?t(this.currentTrialData):this.onUpdateCallback=(()=>{t(this.currentTrialData)})})),n(this)}handleOnDataAvailable(t){t.data.size>0&&(console.log("chunks added"),this.recordedChunks.push(t.data),this.trialComplete&&this.updateData())}updateData(){const t=new Blob(this.recordedChunks,{type:this.recorder.mimeType}),e=new FileReader;e.addEventListener("load",()=>{const t=e.result.split(",")[1];this.currentTrialData.record_video_data=t,this.onUpdateCallback&&this.onUpdateCallback()}),e.readAsDataURL(t)}}return o.info={name:"record-video"},o}();
