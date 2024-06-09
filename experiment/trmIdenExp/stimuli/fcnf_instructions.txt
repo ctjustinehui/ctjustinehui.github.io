@@ -1,5 +1,6 @@
 <h1>Listening test</h1> 
-<p style="text-align: center;">You will hear a words. Decide which of the words presented on the screen it is and click on the corresponding button. You can download your results at the end, please click save and send it to Justine.</p> 
+<p style="text-align: center;">You will hear a words. Decide which of the words presented on the screen it is and click on the corresponding button. <\p>
+<p style="text-align: center;"> You can download your results at the end, please click save and send it to Justine.</p> 
 <p style="text-align: center;">The buttons may swap during the test. </p> 
 <p style="text-align: center;">Please make sure your headphones are in and your sound is on.</p> 
 <p style="text-align: center;">Press next to begin.</p>
