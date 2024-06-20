@@ -231,7 +231,15 @@ var fcnf_instructionsAfterPractice_block = {
     '<p style="text-align: center;">The practice session has finished. Please click Next to continue to the experiment. Remember that the position of the buttons may swap during the test and you will only hear the word once. <\p>',
     ],
     button_label_next: "Next",
-    show_clickable_nav: true
+    show_clickable_nav: true,
+    on_finish:  function(data) {
+                data = jsPsych.data.get();  // updates the data file with the most recent trial
+
+                practiceData = jsPsych.data.get().filter([{phase: "practice"}]);  // only getting response phases
+                practiceData = practiceData.ignore(['internal_node_id', 'trial_type']);  // ignoring internal node id
+
+                submitData(practiceData.csv());  // saves the data to  google form
+            }
 }
 
 var fcnf_instructionsBeforeSurvey_block = {
