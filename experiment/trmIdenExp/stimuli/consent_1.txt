@@ -18,7 +18,7 @@
 </ol>
 
 <h3 id = "consentForm">Participant Information sheet</h3>
-<p id = "consentForm">For more details, you can access the participant information sheet <a href="stimuli/UnderstandingTRMSounds_perception_Participant_Information_Sheet.pdf", target="_blank">here</a>.</p>
+<p id = "consentForm">For more details, you can access the participant information sheet <a href="stimuli/UnderstandingTRMSounds_webBasedPerception_Participant_Information_Sheet.pdf", target="_blank">here</a>.</p>
 
 <h3 id = "consentForm">Confidentiality</h3>
 <p id = "consentForm">Your name will not be recorded and, therefore, will not appear in subsequent scholarly presentations or publications. Other personal information gathered in this study will not be disclosed to any persons other than the investigators and their collaborators. Furthermore, effort will be made to keep this information secure and to destroy it once the results of the study have been published. Following the standard practice in linguistics research, recorded linguistic data, however, will not be disposed (unless by specific request of the participant), as its preservation is necessary for further studies involving wider samples of speakers or for studies examining linguistic change over time.</p>
