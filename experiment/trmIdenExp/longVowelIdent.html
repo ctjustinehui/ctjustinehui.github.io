@@ -1,6 +1,7 @@
 <!-- 	This Program is developed on jsPsych library by Lisa Sullivan
-		Some elements were developed by Hyoung Seok Kwon & Na-Young Ryu --> 
-<!-- Development period: from Oct 26, 2017 to May, 2020 --> 
+		Some elements were developed by Hyoung Seok Kwon & Na-Young Ryu 
+        Modified by Justine Hui 2024--> 
+<!-- Development period: from Oct 26, 2017 to May, 2020, updated to version 7 in 2024 --> 
 <!-- library location: jspsych/ -->
 <!-- PHP file: save_data.php --> 
 <!-- result file location and format: data/time_result.csv -->
@@ -104,6 +105,7 @@ stimuli_continuum = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 practice_continuum = [1, 10]; 
 consent = '';
 participantID = '';
+localSave = 0;
 /*********************************************************************************/
 /****************************** Reading file data ********************************/
 /*********************************************************************************/
@@ -151,22 +153,32 @@ var jsPsych = initJsPsych({
     on_data_update: function(data) {
         data = jsPsych.data.get(); //updates the data file with the most recent trial 
     },
+    on_close: function(){
+        var data = jsPsych.data.get();  // updates the data file with the most recent trial
+        identificationData = jsPsych.data.get().filter([{phase: "practice"}, {phase:"iden_exp"}]);  // only getting response phases
+        identificationData = identificationData.ignore(['internal_node_id', 'trial_type']);  // ignoring internal node id
+        //identificationData = identificationData.ignore('trial_type');  // ignoring trial_type
+        if (localSave == 0 ) {
+            identificationData.localSave('csv','longShortVowelIden_onClose_' + participantID + '.csv'); //save locally
+        }
+        
+    },
     on_finish:  function(data) {
         data = jsPsych.data.get();  // updates the data file with the most recent trial
 
         identificationData = jsPsych.data.get().filter([{phase: "practice"}, {phase:"iden_exp"}]);  // only getting response phases
         identificationData = identificationData.ignore(['internal_node_id', 'trial_type']);  // ignoring internal node id
         //identificationData = identificationData.ignore('trial_type');  // ignoring trial_type
-        identificationData.localSave('csv','longShortVowelIden_myData.csv'); //save locally
-
+        identificationData.localSave('csv','longShortVowelIden_complete_' + participantID + '.csv'); //save locally
+        localSave = 1;
         practiceData = identificationData.filter({phase:"practice"});
-        submitData(practiceData.csv());  // saves the data to  google form
-        for(var i=0; i<hVt_words.length; i++){
-            responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).first(30); //bad hardcoded!
-            submitData(responseData.csv());  // saves the data to  google form
-            responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).last(30);
-            submitData(responseData.csv());  // saves the data to  google form
-        }
+        // submitData(practiceData.csv());  // saves the data to  google form
+        // for(var i=0; i<hVt_words.length; i++){
+        //     responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).first(30); //bad hardcoded!
+        //     submitData(responseData.csv());  // saves the data to  google form
+        //     responseData = identificationData.filter({phase:"iden_exp", word: hVt_words[i].word}).last(30);
+        //     submitData(responseData.csv());  // saves the data to  google form
+        // }
         finish(); //prints the message you saved in the finish() function above
     }
   
@@ -609,8 +621,9 @@ function stamp(){
 function finish() {
     DOM_target = document.querySelector('#jspsych-content'); 
     linkToPrefilledGoogleForm = 'https://docs.google.com/forms/d/e/1FAIpQLSeZkgvLJtpdoHSYwz_UbGytqLV7XEEZlAKpC2rZfo67g2RLDw/viewform?usp=pp_url&entry.1797296953=' + participantID;
+    linkToPrefillQualtrics = 'https://auckland.au1.qualtrics.com/jfe/form/SV_aVjg6I7NFM7akxU?Q_PopulateResponse={%22QID1%22:%22' + participantID + "%22}";
     DOM_target.innerHTML ='<p style="text-align: center;">This is the end of the listening task. Thank you very much for your participation! </p><br/>\
-    <p style="text-align: center;">Please click <a href="' + linkToPrefilledGoogleForm + '",target="_blank">here</a> to proceed to the demographics survey. </p>' ; 
+    <p style="text-align: center;">Please click <a href="' + linkToPrefillQualtrics + '",target="_blank">here</a> to proceed to the demographics survey. </p>' ; 
     jsPsych.pluginAPI.cancelAllKeyboardResponses(); 
     jsPsych.pluginAPI.clearAllTimeouts();
 }; 
@@ -649,23 +662,6 @@ timeline = timeline.concat(fcnf_instructionsBeforeSurvey_block);
 
 jsPsych.run(timeline);
 //jsPsych.simulate(timeline);
-// jsPsych.init({
-//     timeline: timeline, 
-//     show_progress_bar: true, 
-//     default_iti : 300,
-//     /*on_finish: function(data) {jsPsych.data.displayData('csv')}, */
-//     on_data_update: function(data) {
-//         data = jsPsych.data.get(); //updates the data file with the most recent trial 
-//     },
-//     on_finish:  function(data) {
-//         data = jsPsych.data.get();  // updates the data file with the most recent trial      
-//         jsPsych.data.addProperties({participantID: participantID}); //add participant ID
-//         identificationData = jsPsych.data.get().filter([{phase: "practice"}, {phase:"iden_exp"}]);  // only getting response phases
-//         identificationData.localSave('csv','longShortVowelIden_myData.csv'); //save locally
-//         submitData(identificationData.csv());  // saves the data to  google form
-//         finish(); //prints the message you saved in the finish() function above
-//     }
-// });
 
 </script>
 </html>
